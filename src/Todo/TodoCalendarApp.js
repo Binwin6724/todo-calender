@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, Plus, Check, Trash2, Edit3, X, Repeat, Wifi, WifiOff } from 'lucide-react';
 import './todo-calendar.css';
 // MongoDB API functions
-const API_BASE = 'http://localhost:3001/api'; // Your backend API URL
+const API_BASE = process.env.BACKEND_URL || 'http://localhost:3001/api';
 
 // Helper function to get auth headers
 const getAuthHeaders = () => {
