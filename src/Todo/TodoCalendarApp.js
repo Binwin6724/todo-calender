@@ -256,6 +256,8 @@ const TodoCalendarApp = () => {
     const currentTasks = getTasksForDate(selectedDate);
     const task = currentTasks[taskIndex];
     
+    if (!task) return; // Safety check
+    
     setIsLoading(true);
     
     try {
@@ -308,6 +310,8 @@ const TodoCalendarApp = () => {
     const currentTasks = getTasksForDate(selectedDate);
     const task = currentTasks[taskIndex];
     
+    if (!task) return; // Safety check
+    
     if (task.isRepeatingInstance) {
       alert("Cannot delete repeating task instances. Edit the original task to stop repeating.");
       return;
@@ -337,6 +341,8 @@ const TodoCalendarApp = () => {
   const editTask = (taskIndex) => {
     const currentTasks = getTasksForDate(selectedDate);
     const task = currentTasks[taskIndex];
+    
+    if (!task) return; // Safety check
     
     if (task.isRepeatingInstance) {
       // For repeating instances, we need to edit the original
@@ -513,14 +519,15 @@ const TodoCalendarApp = () => {
                 </div>
               ) : (
                 todayTasks
-                  .sort((a, b) => (a.time || '').localeCompare(b.time || ''))
-                  .map((task, index) => (
+                  .map((task, originalIndex) => ({ task, originalIndex }))
+                  .sort((a, b) => (a.task.time || '').localeCompare(b.task.time || ''))
+                  .map(({ task, originalIndex }) => (
                     <div
-                      key={index}
+                      key={task.id || originalIndex}
                       className={`task-item ${task.completed ? 'completed' : ''}`}
                     >
                       <button
-                        onClick={() => toggleTask(index)}
+                        onClick={() => toggleTask(originalIndex)}
                         className={`task-checkbox ${task.completed ? 'completed' : ''}`}
                       >
                         {task.completed && <Check size={12} />}
@@ -546,13 +553,13 @@ const TodoCalendarApp = () => {
 
                       <div className="task-actions">
                         <button
-                          onClick={() => editTask(index)}
+                          onClick={() => editTask(originalIndex)}
                           className="task-action-btn edit"
                         >
                           <Edit3 size={16} />
                         </button>
                         <button
-                          onClick={() => deleteTask(index)}
+                          onClick={() => deleteTask(originalIndex)}
                           className="task-action-btn delete"
                         >
                           <Trash2 size={16} />
