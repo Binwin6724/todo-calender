@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, Plus, Check, Trash2, Edit3, X, Repeat, Wifi, WifiOff } from 'lucide-react';
+import { Calendar, Clock, Plus, Check, Trash2, Edit3, X, Repeat, Wifi, WifiOff, Bell, BellOff } from 'lucide-react';
 import './todo-calendar.css';
+import useNotifications from '../hooks/useNotifications';
 // MongoDB API functions
 const API_BASE = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001/api';
 console.log('API_BASE:', API_BASE);
@@ -111,6 +112,12 @@ const TodoCalendarApp = () => {
   const [view, setView] = useState('day'); // 'day' or 'calendar'
   const [isOnline, setIsOnline] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Initialize notifications hook
+  const { 
+    isNotificationEnabled, 
+    requestNotificationPermission 
+  } = useNotifications(tasks);
 
   // Load tasks from MongoDB on component mount
   useEffect(() => {
@@ -424,6 +431,18 @@ const TodoCalendarApp = () => {
               <div className={`connection-status ${isOnline ? 'online' : 'offline'}`}>
                 {isOnline ? <Wifi size={16} /> : <WifiOff size={16} />}
                 {isOnline ? 'Connected' : 'Offline'}
+              </div>
+              
+              {/* Notification Status */}
+              <div className={`notification-status ${isNotificationEnabled ? 'enabled' : 'disabled'}`}>
+                <button
+                  onClick={requestNotificationPermission}
+                  className="notification-toggle-btn"
+                  title={isNotificationEnabled ? 'Notifications enabled' : 'Click to enable notifications'}
+                >
+                  {isNotificationEnabled ? <Bell size={16} /> : <BellOff size={16} />}
+                  {isNotificationEnabled ? 'Notifications On' : 'Enable Notifications'}
+                </button>
               </div>
             </div>
             <div className="task-stats">

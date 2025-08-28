@@ -879,3 +879,72 @@ body {
     display: none;
   }
 }
+
+/* Notification Status Styles */
+.notification-status {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.notification-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  background: transparent;
+  color: var(--gray-600);
+}
+
+.notification-status.enabled .notification-toggle-btn {
+  background: var(--success-green-light);
+  color: var(--success-green);
+}
+
+.notification-status.disabled .notification-toggle-btn {
+  background: var(--gray-100);
+  color: var(--gray-500);
+}
+
+.notification-status.disabled .notification-toggle-btn:hover {
+  background: var(--primary-blue-light);
+  color: var(--primary-blue);
+}
+
+.notification-status.enabled .notification-toggle-btn:hover {
+  background: var(--success-green);
+  color: var(--white);
+}
+
+/* Header info layout adjustment */
+.header-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+.date-display {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+/* Responsive adjustments for notifications */
+@media (max-width: 768px) {
+  .notification-toggle-btn {
+    font-size: 0.75rem;
+    padding: var(--spacing-xs);
+  }
+  
+  .notification-toggle-btn span {
+    display: none;
+  }
+}
