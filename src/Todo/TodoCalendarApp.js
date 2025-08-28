@@ -22,7 +22,17 @@ const api = {
       const response = await fetch(`${API_BASE}/tasks`, {
         headers: getAuthHeaders(),
       });
-      if (!response.ok) throw new Error('Failed to fetch tasks');
+      if (!response.ok) {
+        if (response.status === 403) {
+          console.error('Unauthorized: Token expired or invalid');
+          // Clear auth data and redirect to login
+          localStorage.removeItem('todoapp_token');
+          localStorage.removeItem('todoapp_user');
+          window.location.reload();
+          return { error: 'Unauthorized' };
+        }
+        throw new Error('Failed to fetch tasks');
+      }
       return await response.json();
     } catch (error) {
       console.error('Error fetching tasks:', error);
