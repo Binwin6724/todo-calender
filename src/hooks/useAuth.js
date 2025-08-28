@@ -44,21 +44,61 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Login function
-  const login = (userData) => {
+  const login = async (userData) => {
     try {
-      setUser(userData);
-      setIsAuthenticated(true);
-      
-      // Store user data and token in localStorage
-      localStorage.setItem('todoapp_user', JSON.stringify({
-        id: userData.id,
-        name: userData.name,
-        email: userData.email,
-        picture: userData.picture
-      }));
+      // Store token first
       localStorage.setItem('todoapp_token', userData.token);
       
-      console.log('User logged in successfully:', userData.name);
+      // Fetch updated user data from backend (includes stored image URL)
+      try {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001/api'}/auth/verify`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${userData.token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          const backendUserData = result.user;
+          
+          setUser(backendUserData);
+          setIsAuthenticated(true);
+          
+          // Store updated user data from backend
+          localStorage.setItem('todoapp_user', JSON.stringify({
+            id: backendUserData.id,
+            name: backendUserData.name,
+            email: backendUserData.email,
+            picture: backendUserData.picture
+          }));
+          
+          console.log('User logged in successfully with stored image:', backendUserData.name);
+        } else {
+          // Fallback to original user data if backend call fails
+          setUser(userData);
+          setIsAuthenticated(true);
+          localStorage.setItem('todoapp_user', JSON.stringify({
+            id: userData.id,
+            name: userData.name,
+            email: userData.email,
+            picture: userData.picture
+          }));
+          console.log('User logged in with fallback data:', userData.name);
+        }
+      } catch (fetchError) {
+        console.error('Error fetching updated user data:', fetchError);
+        // Fallback to original user data
+        setUser(userData);
+        setIsAuthenticated(true);
+        localStorage.setItem('todoapp_user', JSON.stringify({
+          id: userData.id,
+          name: userData.name,
+          email: userData.email,
+          picture: userData.picture
+        }));
+      }
     } catch (error) {
       console.error('Error during login:', error);
     }

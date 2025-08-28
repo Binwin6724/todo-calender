@@ -82,8 +82,13 @@ const AppContent = () => {
       }}>
         {user?.picture && (
           <img 
-            src={user.picture} 
+            src={process.env.REACT_APP_BACKEND_URL.split('/api')[0] + user.picture} 
             alt={user.name}
+            onError={(e) => {
+              // Fallback to a default avatar if image fails to load
+              e.target.style.display = 'none';
+              e.target.nextSibling.style.display = 'flex';
+            }}
             style={{
               width: '32px',
               height: '32px',
@@ -92,6 +97,23 @@ const AppContent = () => {
             }}
           />
         )}
+        <div 
+          style={{
+            display: 'none',
+            width: '32px',
+            height: '32px',
+            borderRadius: '50%',
+            border: '2px solid #e5e7eb',
+            backgroundColor: '#f3f4f6',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            color: '#6b7280'
+          }}
+        >
+          {user?.name?.charAt(0)?.toUpperCase()}
+        </div>
         <span style={{
           fontSize: '0.875rem',
           fontWeight: '500',
